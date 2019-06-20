@@ -42,8 +42,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.txtName.setText(data.get(position).getOpeningDate());
         holder.txtBirthYear.setText(data.get(position).getDisplayTitle());
 
-        if(data.get(position).getMultimedia() != null){
-        String url = data.get(position).getMultimedia().getSrc();
+        if (data.get(position).getMultimedia() != null) {
+            String url = data.get(position).getMultimedia().getSrc();
 
 
             Glide.with(mContext).load(url)
