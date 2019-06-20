@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -20,10 +22,12 @@ import java.util.List;
 import javax.inject.Inject;
 
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> implements Filterable {
     private List<Result> data;
     private RecyclerViewAdapter.ClickListener clickListener;
     private Context mContext;
+    private Filter filter;
+
 
     @Inject
     public RecyclerViewAdapter(ClickListener clickListener) {
@@ -38,8 +42,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.txtName.setText(data.get(position).getOpeningDate());
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        holder.txtName.setText(data.get(position).getDisplayTitle());
         holder.txtBirthYear.setText(data.get(position).getDisplayTitle());
 
         if (data.get(position).getMultimedia() != null) {
@@ -51,8 +55,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .crossFade()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.imageViewIcons);
-
         }
+        holder.mainLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clickListener.launchIntent(position);   // data.get(position).films.get(0)
+            }
+        });
 
     }
 
@@ -76,21 +85,85 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             imageViewIcons = itemView.findViewById(R.id.imageViewIcons);
             mainLinearLayout = itemView.findViewById(R.id.mainLinearLayout);
 
-            /*constraintLayoutContainer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    clickListener.launchIntent(data.get(getAdapterPosition()).films.get(0));
-                }
-            });*/
         }
     }
 
     public interface ClickListener {
-        void launchIntent(String filmName);
+        void launchIntent(int position);
     }
 
     public void setData(List<Result> data) {
         this.data.addAll(data);
         notifyDataSetChanged();
     }
+
+
+    @Override
+    public Filter getFilter() {
+        if (filter == null)
+            filter = new AppFilter<Result>(data);
+        return filter;
+    }
+
+    private class AppFilter<T> extends Filter {
+        private ArrayList<T> sourceObjects;
+
+        public AppFilter(List<T> objects) {
+            sourceObjects = new ArrayList<T>();
+            synchronized (this) {
+                sourceObjects.addAll(objects);
+            }
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence chars) {
+
+            String filterSeq = chars.toString().toLowerCase();
+            FilterResults result = new FilterResults();
+            if (filterSeq != null && filterSeq.length() > 0) {
+                ArrayList<T> filter = new ArrayList<T>();
+
+                for (T object : sourceObjects) {
+                    // the filtering itself
+                    try {
+                        if (((Result) object).getDisplayTitle().toString().toLowerCase().contains(filterSeq))   //   || ((DriverData) object).getLicenseNo().toString().toLowerCase().contains(filterSeq)
+                            filter.add(object);
+                    }
+                    catch (NullPointerException e){
+                        e.printStackTrace();
+                    }
+
+                }
+                result.count = filter.size();
+                result.values = filter;
+
+            } else {
+                synchronized (this) {
+                    result.values = sourceObjects;
+                    result.count = sourceObjects.size();
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            ArrayList<Result> filtered = (ArrayList<Result>) results.values;
+            clear();
+            data.addAll(filtered);
+            notifyDataSetChanged();
+        }
+    }
+
+    private void clear() {
+        if (null != data && data.size() > 0){
+            data.clear();
+            notifyDataSetChanged();
+        }
+    }
+
+    public ArrayList<Result> refreshResults(){
+        return (ArrayList<Result>) data;
+    }
+
 }

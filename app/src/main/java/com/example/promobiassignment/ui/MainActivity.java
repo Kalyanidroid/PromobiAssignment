@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.promobiassignment.MyApplication;
@@ -20,6 +24,7 @@ import com.example.promobiassignment.pojo.Result;
 import com.example.promobiassignment.pojo.ReviewDataResponse;
 import com.example.promobiassignment.retrofit.APIInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -32,9 +37,14 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewAdapter.ClickListener {
 
+    private ArrayList<Result> resultArrayList;
+
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
     MainActivityComponent mainActivityComponent;
+
+    @BindView(R.id.et_search)
+    EditText searchEditText;
 
     @Inject
     public RecyclerViewAdapter recyclerViewAdapter;
@@ -67,10 +77,43 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
         mainActivityComponent.injectMainActivity(this);
         recyclerView.setAdapter(recyclerViewAdapter);
 
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                try {
+                    if (recyclerViewAdapter != null) {
+                        recyclerViewAdapter.getFilter().filter(s);
+                    } else {
+                        Log.d("filter", "no filter availible");
+                    }
+                }
+                catch (NullPointerException e){
+                    Log.e("NP Exception","In searchEditText");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
         apiInterface.getReview("godfather","3uX5yegGVPrNAKpQYYDfVa9glfHdGiIV").enqueue(new Callback<ReviewDataResponse>() {
             @Override
             public void onResponse(Call<ReviewDataResponse> call, Response<ReviewDataResponse> response) {
-                populateRecyclerView(response.body().getResults());
+                try {
+                    if(response.body().getStatus().equalsIgnoreCase("ok")) {
+                        populateRecyclerView(response.body().getResults());
+                        resultArrayList = (ArrayList<Result>) response.body().getResults();
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -78,16 +121,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
 
             }
         });
+
     }
 
     private void populateRecyclerView(List<Result> response) {
         recyclerViewAdapter.setData(response);
     }
 
-
     @Override
-    public void launchIntent(String url) {
-        Toast.makeText(mContext, "RecyclerView Row selected", Toast.LENGTH_SHORT).show();
+    public void launchIntent(int position) {
+        resultArrayList = recyclerViewAdapter.refreshResults();
+        Result result = resultArrayList.get(position);
+        Toast.makeText(mContext, "Clicked: "+result.getDisplayTitle(), Toast.LENGTH_SHORT).show();
         //startActivity(new Intent(activityContext, DetailActivity.class).putExtra("url", url));
     }
 }
+

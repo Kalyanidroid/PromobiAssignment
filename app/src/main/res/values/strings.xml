@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">PromobiAssignment</string>
+    <string name="search_by_title">Search by Title</string>
 </resources>
