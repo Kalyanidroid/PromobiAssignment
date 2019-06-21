@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">PromobiAssignment</string>
     <string name="search_by_title">Search by Title</string>
+    <string name="sample_headline">sample headline</string>
+    <string name="title">Title:</string>
+    <string name="sample_movie_name">Sample Movie Name</string>
+    <string name="review_by">Review By:</string>
+    <string name="reviewer_name">Reviewer Name</string>
+    <string name="critics_rating">Critics Rating:</string>
+    <string name="rating">Rating</string>
+    <string name="publication_date">Publication Date:</string>
+    <string name="date">Date</string>
+    <string name="summary">Summary:</string>
+    <string name="view_article">View Article:</string>
+    <string name="link_to_webview">Link to webview</string>
 </resources>

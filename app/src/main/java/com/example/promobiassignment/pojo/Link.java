@@ -2,7 +2,9 @@ package com.example.promobiassignment.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Link {
+import java.io.Serializable;
+
+public class Link implements Serializable {
 
     @SerializedName("type")
     private String type;

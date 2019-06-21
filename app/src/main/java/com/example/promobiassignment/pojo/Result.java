@@ -2,7 +2,9 @@ package com.example.promobiassignment.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Result {
+import java.io.Serializable;
+
+public class Result implements Serializable {
 
     @SerializedName("display_title")
     private String displayTitle;

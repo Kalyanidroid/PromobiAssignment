@@ -2,7 +2,9 @@ package com.example.promobiassignment.pojo;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Multimedia {
+import java.io.Serializable;
+
+public class Multimedia implements Serializable {
     @SerializedName("type")
     private String type;
     @SerializedName("src")

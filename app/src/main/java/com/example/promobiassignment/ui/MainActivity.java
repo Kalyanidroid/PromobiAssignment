@@ -1,6 +1,7 @@
 package com.example.promobiassignment.ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -132,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewAdapt
     public void launchIntent(int position) {
         resultArrayList = recyclerViewAdapter.refreshResults();
         Result result = resultArrayList.get(position);
-        Toast.makeText(mContext, "Clicked: "+result.getDisplayTitle(), Toast.LENGTH_SHORT).show();
-        //startActivity(new Intent(activityContext, DetailActivity.class).putExtra("url", url));
+        Toast.makeText(mContext, result.getDisplayTitle(), Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(activityContext, DetailsActivity.class).putExtra("result", result));
     }
 }
 
