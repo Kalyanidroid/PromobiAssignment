@@ -6,7 +6,7 @@
     android:layout_margin="8dp"
     android:orientation="vertical"
     android:weightSum="10"
-    tools:context=".ui.DetailsActivity">
+    tools:context=".modules.feeds.FeedDetailsActivity">
 
     <ImageView
         android:id="@+id/iv_poster"
