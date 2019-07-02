@@ -23,7 +23,6 @@ public class MyApplication extends Application {
 
         applicationComponent.injectApplication(this);
 
-
     }
 
     public static MyApplication get(Activity activity) {

@@ -15,8 +15,7 @@
         android:theme="@style/AppTheme">
 
 
-
-        <activity android:name=".ui.MainActivity" >
+        <activity android:name=".modules.feeds.FeedListActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,8 +23,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.DetailsActivity" />
-        <activity android:name=".ui.WebviewActivity" />
+        <activity android:name=".modules.feeds.FeedDetailsActivity" />
+        <activity android:name=".modules.WebviewActivity" />
     </application>
 
 </manifest>
